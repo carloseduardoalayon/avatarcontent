@@ -1,0 +1,942 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Carlos Alayon — AI Avatar Video for Local Service Businesses</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --black: #0a0a0a;
+      --white: #f5f2ee;
+      --cream: #ede9e3;
+      --accent: #c8f03a;
+      --accent-dark: #a8cc1a;
+      --gray: #6b6b6b;
+      --light-gray: #d0ccc6;
+      --border: rgba(245,242,238,0.1);
+    }
+    html { scroll-behavior: smooth; }
+    body { background: var(--black); color: var(--white); font-family: 'Inter', sans-serif; font-size: 17px; line-height: 1.7; overflow-x: hidden; }
+    body::before { content: ''; position: fixed; inset: 0; background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E"); pointer-events: none; z-index: 1000; opacity: 0.4; }
+
+    .lang-toggle { display: flex; gap: 6px; }
+.lang-btn { background: transparent; border: 1px solid var(--border); color: var(--gray); font-family: 'Poppins', sans-serif; font-size: 0.7rem; font-weight: 700; letter-spacing: 0.1em; padding: 6px 12px; border-radius: 2px; cursor: pointer; transition: all 0.2s; }
+.lang-btn:hover, .lang-btn.active { border-color: rgba(200,240,58,0.4); color: var(--accent); background: rgba(200,240,58,0.08); }
+[lang="es"] .en-text { display: none;}
+[lang="en"] .es-text { display: none; }
+
+    nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; padding: 20px 40px; display: flex; justify-content: space-between; align-items: center; background: rgba(10,10,10,0.85); backdrop-filter: blur(12px); border-bottom: 1px solid var(--border); }
+    .nav-logo { font-family: 'Poppins', sans-serif; font-weight: 800; font-size: 1rem; letter-spacing: 0.05em; color: var(--white); text-decoration: none; }
+    .nav-logo span { color: var(--accent); }
+    .nav-cta { background: var(--accent); color: var(--black); font-family: 'Poppins', sans-serif; font-weight: 700; font-size: 0.8rem; letter-spacing: 0.08em; text-transform: uppercase; padding: 10px 22px; border-radius: 2px; text-decoration: none; transition: background 0.2s; }
+    .nav-cta:hover { background: var(--accent-dark); }
+
+    .hero { min-height: 100vh; display: flex; align-items: center; padding: 120px 40px 80px; position: relative; overflow: hidden; }
+    .hero::after { content: ''; position: absolute; top: -200px; right: -100px; width: 500px; height: 500px; background: radial-gradient(circle, rgba(200,240,58,0.08) 0%, transparent 70%); pointer-events: none; }
+    .hero-inner { display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: center; max-width: 1200px; margin: 0 auto; width: 100%; }
+    .hero-eyebrow { font-family: 'Poppins', sans-serif; font-size: 0.75rem; font-weight: 600; letter-spacing: 0.15em; text-transform: uppercase; color: var(--accent); margin-bottom: 24px; display: flex; align-items: center; gap: 12px; }
+    .hero-eyebrow::before { content: ''; display: inline-block; width: 32px; height: 1px; background: var(--accent); }
+    .hero h1 { font-family: 'Poppins', sans-serif; font-size: clamp(2.4rem, 5vw, 4rem); font-weight: 800; line-height: 1.05; letter-spacing: -0.02em; margin-bottom: 24px; }
+    .hero h1 em { font-style: normal; color: var(--accent); }
+    .hero-sub { font-size: 1rem; color: var(--light-gray); line-height: 1.7; margin-bottom: 36px; }
+    .hero-actions { display: flex; gap: 14px; flex-wrap: wrap; align-items: center; }
+
+    .hero-video-wrap { position: relative; border-radius: 6px; overflow: hidden; background: #111; border: 1px solid var(--border); box-shadow: 0 40px 80px rgba(0,0,0,0.5); }
+    .hero-video-wrap::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: var(--accent); z-index: 2; }
+    .hero-video-wrap video { width: 100%; display: block; height: auto; object-fit: contain; }
+    .video-badge { position: absolute; top: 16px; right: 16px; background: rgba(200,240,58,0.15); border: 1px solid rgba(200,240,58,0.3); color: var(--accent); font-family: 'Poppins', sans-serif; font-size: 0.65rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; padding: 5px 10px; border-radius: 2px; z-index: 3; }
+    .video-mute-btn { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 4; background: rgba(10,10,10,0.75); border: 1px solid rgba(200,240,58,0.35); color: var(--accent); width: 42px; height: 42px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s; backdrop-filter: blur(6px); }
+.video-mute-btn:hover { background: rgba(200,240,58,0.15);border-color: var(--accent); }
+.nav-right { display: flex; align-items: center; gap: 16px; }
+
+    .btn-primary { display: inline-flex; align-items: center; gap: 10px; background: var(--accent); color: var(--black); font-family: 'Poppins', sans-serif; font-weight: 700; font-size: 0.9rem; letter-spacing: 0.05em; padding: 14px 28px; border-radius: 2px; text-decoration: none; transition: all 0.2s; border: none; cursor: pointer; }
+    .btn-primary:hover { background: var(--accent-dark); transform: translateY(-1px); }
+    .btn-secondary { display: inline-flex; align-items: center; gap: 10px; background: transparent; color: var(--white); font-family: 'Poppins', sans-serif; font-weight: 600; font-size: 0.9rem; letter-spacing: 0.05em; padding: 14px 28px; border-radius: 2px; border: 1px solid rgba(245,242,238,0.2); text-decoration: none; transition: all 0.2s; }
+    .btn-secondary:hover { border-color: var(--accent); color: var(--accent); }
+
+    section { padding: 100px 40px; max-width: 1100px; margin: 0 auto; }
+    .section-label { font-family: 'Poppins', sans-serif; font-size: 0.7rem; font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase; color: var(--accent); margin-bottom: 20px; display: flex; align-items: center; gap: 10px; }
+    .section-label::before { content: ''; display: inline-block; width: 20px; height: 1px; background: var(--accent); }
+    h2 { font-family: 'Poppins', sans-serif; font-size: clamp(1.8rem, 4vw, 2.8rem); font-weight: 800; line-height: 1.15; letter-spacing: -0.02em; margin-bottom: 24px; }
+    h2 em { font-style: normal; color: var(--accent); }
+    .divider { border: none; border-top: 1px solid var(--border); max-width: 1100px; margin: 0 auto; }
+
+    .problem-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: start; margin-top: 48px; }
+    .problem-text p { color: var(--light-gray); margin-bottom: 20px; font-size: 1.05rem; }
+    .problem-text p strong { color: var(--white); font-weight: 500; }
+    .problem-callout { background: rgba(200,240,58,0.06); border: 1px solid rgba(200,240,58,0.2); border-radius: 4px; padding: 32px; }
+    .problem-callout p { font-family: 'Poppins', sans-serif; font-size: 1.15rem; font-weight: 600; line-height: 1.55; color: var(--white); }
+    .problem-callout p em { font-style: normal;color: var(--accent); }
+
+    .difference-section { background: var(--cream); color: var(--black); max-width: 100%; padding: 100px 40px; }
+    .difference-inner { max-width: 1100px; margin: 0 auto; }
+    .difference-section .section-label { color: #6b6b6b; }
+    .difference-section .section-label::before { background: #6b6b6b; }
+    .difference-section h2 { color: var(--black); }
+    .difference-section h2 em { font-style: normal; color: #1a1a1a; text-decoration: underline; text-decoration-color: var(--accent-dark); text-underline-offset: 6px; }
+    .difference-body { display: grid; grid-template-columns: 1.2fr 1fr; gap: 80px; margin-top: 48px; align-items: start; }
+    .difference-body p { color: #3a3a3a; margin-bottom: 20px; font-size: 1.05rem; line-height: 1.75; }
+    .difference-body p strong { color: var(--black); }
+    .vs-box { background: var(--black); color: var(--white); border-radius: 4px; padding: 36px; }
+    .vs-box h3 { font-family: 'Poppins', sans-serif; font-size: 0.7rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--gray); margin-bottom: 20px; }
+    .vs-item { display: flex; gap: 14px; margin-bottom: 16px; align-items: flex-start; font-size: 0.95rem; line-height: 1.5; }
+    .vs-item .icon { flex-shrink: 0; width: 20px; height: 20px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.7rem; margin-top: 2px; }
+.vs-item .icon.yes { background: var(--accent); color: var(--black); }
+    .vs-item .icon.no { background: rgba(255,255,255,0.1); color: var(--gray); }
+    .vs-divider { border: none; border-top: 1px solid rgba(255,255,255,0.08); margin: 24px 0; }
+
+    .steps { display: grid; grid-template-columns: repeat(4, 1fr); gap: 2px; margin-top: 60px; }
+    .step { background: rgba(255,255,255,0.03); border: 1px solid var(--border); padding: 36px 28px; transition: background 0.2s; }
+    .step:hover { background: rgba(200,240,58,0.04); }
+.step-number { font-family: 'Poppins', sans-serif; font-size: 3rem; font-weight: 800; color: rgba(200,240,58,0.15); line-height: 1; margin-bottom: 20px; }
+    .step h3 { font-family: 'Poppins', sans-serif; font-size: 0.95rem; font-weight: 700; margin-bottom: 12px; }
+    .step p { font-size: 0.9rem; color: var(--gray); line-height: 1.65; }
+
+    .proof-section { background: rgba(200,240,58,0.04); border-top: 1px solid rgba(200,240,58,0.15); border-bottom: 1px solid rgba(200,240,58,0.15); max-width: 100%; padding: 100px 40px; }
+    .proof-inner { max-width: 1100px; margin: 0 auto; }
+    .proof-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 60px; margin-top: 48px; align-items: center; }
+    .proof-image { background: rgba(255,255,255,0.05); border: 1px solid var(--border); border-radius: 4px; aspect-ratio: 16/10; display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 12px; color: var(--gray); font-size: 0.85rem; text-align: center; padding: 20px; }
+    .proof-stats { display: flex; flex-direction: column; gap: 28px; }
+    .stat-row { display: flex; flex-direction: column; gap: 8px; }
+    .stat-label { font-size: 0.8rem; color: var(--gray); letter-spacing: 0.05em; text-transform: uppercase; font-family: 'Poppins', sans-serif; }
+    .bar-item { display: flex; align-items: center; gap: 12px; font-size: 0.85rem; }
+    .bar-label { color: var(--gray); width: 130px; flex-shrink: 0; }
+.bar-track { flex: 1; height: 6px; background: rgba(255,255,255,0.08); border-radius: 3px; overflow: hidden; }
+    .bar-fill { height: 100%; border-radius: 3px; background: var(--accent); }
+    .bar-fill.low { background: rgba(255,255,255,0.2); }
+    .bar-value { color: var(--white); font-family: 'Poppins', sans-serif; font-weight: 700; font-size: 0.9rem; width: 24px; text-align: right; }
+    .proof-note { margin-top: 32px; font-size: 0.95rem; color: var(--light-gray); line-height: 1.75; }
+    .proof-note strong { color: var(--white); }
+    .proof-image-real { width: 100%; }
+.proof-image-real img { width: 100%; height: auto; border-radius: 4px; border: 1px solid rgba(255,255,255,0.1); display: block; }
+.proof-image-real p { font-size: 0.8rem; color: var(--gray); margin-top: 12px; line-height: 1.5; }
+
+    .about-grid { display: grid; grid-template-columns: 1fr 1.5fr; gap: 80px; align-items: start; margin-top: 48px; }
+    .about-card { background: rgba(255,255,255,0.03); border: 1px solid var(--border); border-radius: 4px; padding: 36px; text-align: center; }
+    .about-avatar { width: 80px; height: 80px; border-radius: 50%; background: rgba(200,240,58,0.1); border: 2px solid rgba(200,240,58,0.3); margin: 0 auto 20px; display: flex; align-items: center; justify-content: center; font-family: 'Poppins', sans-serif; font-size: 1.5rem; font-weight: 800; color: var(--accent); }
+    .about-card h3 { font-family: 'Poppins', sans-serif; font-size: 1.1rem; font-weight: 800; margin-bottom: 6px; }
+    .about-card .role { font-size: 0.8rem; color: var(--gray); letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 20px; }
+    .about-tags { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin-top: 20px; }
+    .tag { background: rgba(200,240,58,0.08); border: 1px solid rgba(200,240,58,0.2); color: var(--accent); font-size: 0.7rem; font-family: 'Poppins', sans-serif; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; padding: 5px 10px; border-radius: 2px; }
+    .about-text p { color: var(--light-gray); margin-bottom: 20px; font-size: 1.05rem; line-height: 1.75; }
+    .about-text p strong { color: var(--white); font-weight: 500; }
+
+/* PRICING */
+    .pricing-section { max-width: 100%; padding: 100px 40px; }
+    .pricing-inner { max-width: 1100px; margin: 0 auto; }
+    .pricing-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2px; margin-top: 60px; }
+    .pricing-card { background: rgba(255,255,255,0.03); border: 1px solid var(--border); padding: 40px 32px; position: relative; display: flex; flex-direction: column; transition: background 0.2s; }
+    .pricing-card:hover { background: rgba(255,255,255,0.05); }
+    .pricing-card.featured { background: rgba(200,240,58,0.06); border-color: rgba(200,240,58,0.3); }
+    .pricing-card.featured::before { content: 'MOST POPULAR'; position: absolute; top: -1px; left: 50%; transform: translateX(-50%); background: var(--accent); color: var(--black); font-family: 'Poppins', sans-serif; font-size: 0.6rem; font-weight: 800; letter-spacing: 0.12em; padding: 5px 14px; border-radius: 0 0 3px 3px; }
+    .tier-label { font-family: 'Poppins', sans-serif; font-size: 0.65rem; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase; color: var(--gray); margin-bottom: 16px; }
+    .pricing-card.featured .tier-label { color: var(--accent); }
+    .tier-name { font-family: 'Poppins', sans-serif; font-size: 1.4rem; font-weight: 800; margin-bottom: 8px; }
+    .tier-desc { font-size: 0.9rem; color: var(--gray); line-height: 1.6; margin-bottom: 28px; min-height: 56px; }
+    .tier-price { font-family: 'Poppins', sans-serif; font-size: 2.8rem; font-weight: 800; color: var(--accent); line-height: 1; margin-bottom: 4px; }
+    .tier-price-note { font-size: 0.8rem; color: var(--gray); margin-bottom: 32px; }
+    .tier-features { list-style: none; display: flex; flex-direction: column; gap: 12px; margin-bottom: 36px; flex: 1; }
+    .tier-features li { display: flex; gap: 10px; font-size: 0.9rem; color: var(--light-gray); line-height: 1.5; align-items: flex-start; }
+    .tier-features li .chk { color: var(--accent); flex-shrink: 0; }
+    .tier-features li .dsh { color: var(--gray); flex-shrink: 0; }
+    .tier-cta { display: block; text-align: center; background: transparent; border: 1px solid rgba(245,242,238,0.2); color: var(--white); font-family: 'Poppins', sans-serif; font-weight: 700; font-size: 0.85rem; letter-spacing: 0.06em; padding: 14px 20px; border-radius: 2px; text-decoration: none; transition: all 0.2s; }
+    .tier-cta:hover { border-color: var(--accent); color: var(--accent); }
+    .pricing-card.featured .tier-cta { background: var(--accent); color: var(--black); border-color: var(--accent); }
+    .pricing-card.featured .tier-cta:hover { background: var(--accent-dark); }
+    .pricing-note { text-align: center; margin-top: 32px; font-size: 0.85rem; color: var(--gray); }
+
+    /* FOR WHO */
+    .for-who-section { background: var(--cream); color: var(--black); max-width: 100%; padding: 100px 40px; }
+    .for-who-inner { max-width: 1100px; margin: 0 auto; }
+    .for-who-section .section-label { color: #6b6b6b; }
+    .for-who-section .section-label::before { background: #6b6b6b; }
+    .for-who-section h2 { color: var(--black); }
+    .for-who-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; margin-top: 48px; }
+    .for-who-card { padding: 36px; border-radius: 4px; }
+    .for-who-card.yes { background: var(--black); color: var(--white); }
+    .for-who-card.no { background: rgba(0,0,0,0.06); }
+    .for-who-card h3 { font-family: 'Poppins', sans-serif; font-size: 0.7rem; letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 24px; }
+    .for-who-card.yes h3 { color: var(--accent); }
+    .for-who-card.no h3 { color: #999; }
+    .for-who-item { display: flex; gap: 12px; margin-bottom: 16px; font-size: 0.95rem; line-height: 1.55; align-items: flex-start; }
+    .for-who-card.yes .for-who-item { color: #ccc; }
+    .for-who-card.no .for-who-item { color: #555; }
+    .chk { color: var(--accent); flex-shrink: 0; margin-top: 2px; }
+    .crs { color: #999; flex-shrink: 0; margin-top: 2px; }
+
+    /* BOOKING */
+    .booking-section { max-width: 100%; padding: 100px 40px; }
+    .booking-inner { max-width: 600px; margin: 0 auto; }
+    .booking-inner h2 { text-align: center; margin-bottom: 12px; }
+    .booking-sub { text-align: center; color: var(--light-gray); margin-bottom: 48px; font-size: 1rem; }
+    .calendar-widget { background: rgba(255,255,255,0.03); border: 1px solid var(--border); border-radius: 6px; overflow: hidden; }
+.cal-header { display: flex; justify-content: space-between; align-items: center; padding: 20px 24px; border-bottom: 1px solid var(--border); }
+    .cal-month-year { font-family: 'Poppins', sans-serif; font-size: 1rem; font-weight: 700; }
+    .cal-nav { display: flex; gap: 8px; }
+    .cal-nav button { background: rgba(255,255,255,0.05); border: 1px solid var(--border); color: var(--light-gray); width: 32px; height: 32px; border-radius: 2px; cursor: pointer; font-size: 1rem; display: flex; align-items: center; justify-content: center; transition: all 0.15s; }
+    .cal-nav button:hover { background: rgba(200,240,58,0.1); border-color: rgba(200,240,58,0.3); color: var(--accent); }
+    .cal-grid { padding: 16px 20px; }
+    .cal-days-header { display: grid; grid-template-columns: repeat(7, 1fr); margin-bottom: 8px; }
+    .cal-day-name { font-family: 'Poppins', sans-serif; font-size: 0.6rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--gray); text-align: center; padding: 6px 0; }
+    .cal-dates { display: grid; grid-template-columns: repeat(7, 1fr); gap: 2px; }
+    .cal-date { aspect-ratio: 1; display: flex; align-items: center; justify-content: center; font-size: 0.85rem; color: var(--light-gray); border-radius: 2px; cursor: pointer; transition: all 0.12s; position: relative; }
+    .cal-date:hover:not(.empty):not(.past) { background: rgba(200,240,58,0.12); color: var(--accent); }
+    .cal-date.empty { cursor: default; }
+    .cal-date.past { color: rgba(255,255,255,0.15); cursor: default; pointer-events: none; }
+    .cal-date.today { color: var(--accent); font-weight: 700; }
+    .cal-date.today::after { content: ''; position: absolute; bottom: 3px; width: 3px; height: 3px; border-radius: 50%; background: var(--accent); }
+    .cal-date.selected { background: var(--accent) !important; color: var(--black) !important; font-weight: 700; }
+    .cal-date.available::before { content: ''; position: absolute; top: 3px; right: 3px; width: 3px; height: 3px; border-radius: 50%; background: rgba(200,240,58,0.5); }
+    .cal-date.selected::before { display: none; }
+    .time-slots { padding: 16px 20px; border-top: 1px solid var(--border); display: none; }
+    .time-slots.visible { display: block; }
+    .time-slots-label { font-family: 'Poppins', sans-serif; font-size: 0.68rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--gray); margin-bottom: 12px; }
+    .time-slots-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 7px; }
+    .time-slot { background: rgba(255,255,255,0.04); border: 1px solid var(--border); color: var(--light-gray); font-size: 0.78rem; font-family: 'Poppins', sans-serif; font-weight: 600; padding: 9px 4px; border-radius: 2px; text-align: center; cursor: pointer; transition: all 0.12s; }
+    .time-slot:hover { background: rgba(200,240,58,0.1); border-color: rgba(200,240,58,0.3); color: var(--accent); }
+    .time-slot.selected { background: var(--accent); border-color: var(--accent); color: var(--black); }
+    .booking-form { padding: 16px 20px 20px; border-top: 1px solid var(--border); display: none; }
+    .booking-form.visible { display: block; }
+    .booking-form-label { font-family: 'Poppins', sans-serif; font-size: 0.68rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--gray); margin-bottom: 14px; }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 8px; }
+    .form-input { background: rgba(255,255,255,0.04); border: 1px solid var(--border); color: var(--white); font-family: 'DM Sans', sans-serif; font-size: 0.9rem; padding: 11px 13px; border-radius: 2px; width: 100%; transition: border-color 0.2s; outline: none; }
+    .form-input::placeholder { color: var(--gray); }
+    .form-input:focus { border-color: rgba(200,240,58,0.4); }
+    .booking-summary { background: rgba(200,240,58,0.06); border: 1px solid rgba(200,240,58,0.15); border-radius: 2px; padding: 11px 13px; margin-bottom: 12px; font-size: 0.85rem; color: var(--light-gray); }
+    .booking-summary strong { color: var(--accent); }
+    .btn-book { width: 100%; background: var(--accent); color: var(--black); font-family: 'Poppins', sans-serif; font-weight: 800; font-size: 0.9rem; letter-spacing: 0.06em; padding: 14px; border: none; border-radius: 2px; cursor: pointer; transition: background 0.2s; margin-top: 4px; }
+    .btn-book:hover { background: var(--accent-dark); }
+    .booking-success { padding: 40px 24px; text-align: center; display: none; }
+    .booking-success.visible { display: block; }
+    .success-icon { width: 52px; height: 52px; background: rgba(200,240,58,0.1); border: 2px solid rgba(200,240,58,0.3); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 18px; font-size: 1.3rem; color: var(--accent); }
+    .booking-success h3 { font-family: 'Poppins', sans-serif; font-size: 1.2rem; font-weight: 800; margin-bottom: 10px; }
+    .booking-success p { color: var(--light-gray); font-size: 0.9rem; line-height: 1.65; }
+
+    .cta-section { text-align: center; padding: 120px 40px; position: relative; overflow: hidden; }
+    .cta-section::before { content: ''; position: absolute; bottom: -100px; left: 50%; transform: translateX(-50%); width: 600px; height: 400px; background: radial-gradient(ellipse, rgba(200,240,58,0.08) 0%, transparent 70%); pointer-events: none; }
+    .cta-section h2 { font-size: clamp(2rem, 5vw, 3.2rem); max-width: 660px; margin: 0 auto 24px; }
+    .cta-section p { color: var(--light-gray); max-width: 480px; margin: 0 auto 48px; font-size: 1.05rem; }
+    .cta-buttons { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; }
+
+    footer { border-top: 1px solid var(--border); padding: 40px; display: flex; justify-content: space-between; align-items: center; max-width: 1100px; margin: 0 auto; font-size: 0.8rem; color: var(--gray); }
+    footer a { color: var(--gray); text-decoration: none; transition: color 0.2s; }
+    footer a:hover { color: var(--accent); }
+
+@keyframes fadeUp { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: translateY(0); } }
+    .fade-up { opacity: 0; animation: fadeUp 0.7s ease forwards; }
+    .fade-up:nth-child(1) { animation-delay: 0.1s; }
+    .fade-up:nth-child(2) { animation-delay: 0.25s; }
+    .fade-up:nth-child(3) { animation-delay: 0.4s; }
+    .fade-up:nth-child(4) { animation-delay: 0.55s; }
+
+    @media (max-width: 900px) {
+      .hero-inner { grid-template-columns: 1fr; }
+      .problem-grid, .difference-body, .proof-grid, .about-grid, .for-who-grid { grid-template-columns: 1fr; gap: 36px; }
+      .steps, .pricing-grid { grid-template-columns: 1fr 1fr; }
+      .time-slots-grid { grid-template-columns: repeat(3, 1fr); }
+    }
+    @media (max-width: 580px) {
+      nav { padding: 16px 20px; }
+      .hero { padding: 100px 20px 60px; }
+      section, .difference-section, .proof-section, .for-who-section, .booking-section, .pricing-section { padding: 70px 20px; }
+      .steps, .pricing-grid { grid-template-columns: 1fr; }
+      .hero-actions, .cta-buttons { flex-direction: column; }
+      .btn-primary, .btn-secondary { width: 100%; justify-content: center; }
+      .form-row { grid-template-columns: 1fr; }
+      footer { flex-direction: column; gap: 16px; text-align: center; }
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a href="#" class="nav-logo">Carlos<span>.</span>Alayon</a>
+  <div class="nav-right">
+    <a href="#booking" class="nav-cta">
+      <span class="en-text">Book a Call</span>
+      <span class="es-text">Agendar Llamada</span>
+    </a>
+    <div class="lang-toggle">
+      <button class="lang-btn active" id="btnEN" onclick="switchLang('en')">EN</button>
+      <button class="lang-btn" id="btnES" onclick="switchLang('es')">ES</button>
+    </div>
+  </div>
+</nav>
+
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-inner">
+    <div>
+      <p class="hero-eyebrow fade-up">
+        <span class="en-text">AI Avatar Video Content</span>
+        <span class="es-text">Contenido de Video con Avatares de IA</span>
+      </p>
+      <h1 class="fade-up">
+        <span class="en-text">Stop paying for leads<br>that go <em>nowhere.</em></span>
+        <span class="es-text">Deja de pagar por prospectos<br>que no van a <em>ninguna parte.</em></span>
+      </h1>
+      <p class="hero-sub fade-up">
+        <span class="en-text">The problem isn't your budget. It's your content. If your ads aren't speaking directly to your ideal customer's pain — in the right language, with the right authority — you're attracting the wrong people and wasting every dollar you spend.</span>
+        <span class="es-text">El problema no es tu presupuesto. Es tu contenido. Si tus anuncios no le hablan directamente al dolor de tu cliente ideal —en el idioma correcto y con la autoridad correcta— estás atrayendo a la gente equivocada y desperdiciando cada dólar que inviertes.</span>
+      </p>
+      <div class="hero-actions fade-up">
+        <a href="#booking" class="btn-primary">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+          <span class="en-text">Book a Free Call</span>
+          <span class="es-text">Agendar Llamada Gratis</span>
+        </a>
+        <a href="https://wa.link/vqaapk" target="_blank" class="btn-secondary">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+          WhatsApp
+        </a>
+      </div>
+    </div>
+    <div class="hero-video-wrap fade-up">
+  <span class="video-badge">
+    <span class="en-text">Live Demo</span>
+    <span class="es-text">Demostración</span>
+  </span>
+  <video id="heroVideo" autoplay muted playsinline loop>
+    <source src="https://github.com/carloseduardoalayon/avatarcontent/raw/main/making-avatars_.mp4" type="video/mp4">
+  </video>
+  <button class="video-mute-btn" id="muteBtn" onclick="toggleMute()" title="Toggle sound">
+    <svg id="iconMuted" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><line x1="23" y1="9" x2="17" y2="15"/><line x1="17" y1="9" x2="23" y2="15"/></svg>
+    <svg id="iconSound" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>
+  </button>
+</div>
+  </div>
+</div>
+
+<hr class="divider">
+
+<!-- PROBLEM -->
+<section>
+  <p class="section-label">
+    <span class="en-text">The Problem</span>
+    <span class="es-text">El Problema</span>
+  </p>
+  <h2>
+    <span class="en-text">Most agencies run your ads.<br>Few build <em>the message</em> that makes them work.</span>
+    <span class="es-text">La mayoría de las agencias manejan tus anuncios.<br>Pocas construyen <em>el mensaje</em> que los hace funcionar.</span>
+  </h2>
+  <div class="problem-grid">
+    <div class="problem-text">
+      <p>
+        <span class="en-text">Most local service businesses end up with the same problem. <strong>Generic content that looks like everyone else.</strong> Same stock footage. Same offers. Same copy. And leads that fill out the form and ghost you.</span>
+        <span class="es-text">La mayoría de los negocios de servicios locales terminan con el mismo problema. <strong>Contenido genérico que se ve como el de todos los demás.</strong> Mismo video de stock. Mismas ofertas. Mismo texto. Y prospectos que llenan el formulario y luego desaparecen.</span>
+      </p>
+      <p>
+        <span class="en-text">The real issue isn't the budget. It isn't the platform. It's that your prospect doesn't feel like <strong>you're talking to them specifically.</strong> They don't see authority. They don't feel understood.</span>
+        <span class="es-text">El problema real no es el presupuesto. No es la plataforma. Es que tu prospecto no siente que <strong>le estás hablando específicamente a él.</strong> No ve autoridad. No se siente comprendido.</span>
+      </p>
+      <p>
+        <span class="en-text">So they scroll past — or they contact five contractors at the same time and choose whoever is cheapest. That's not a lead problem. <strong>That's a message problem.</strong></span>
+        <span class="es-text">Así que siguen de largo —o contactan a cinco contratistas al mismo tiempo y eligen al más barato. Eso no es un problema de prospectos. <strong>Es un problema de mensaje.</strong></span>
+      </p>
+    </div>
+    <div class="problem-callout">
+      <p>
+        <span class="en-text">"Most marketing agencies will run your ads. <em>I build the content that makes your business the obvious choice</em> before the prospect even clicks — so your ads attract people who already trust you."</span>
+        <span class="es-text">"La mayoría de las agencias de marketing manejarán tus anuncios. <em>Yo construyo el contenido que hace de tu negocio la opción obvia</em> incluso antes de que el prospecto haga clic, para que tus anuncios atraigan a personas que ya confían en ti."</span>
+      </p>
+    </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- DIFFERENCE -->
+<div class="difference-section">
+  <div class="difference-inner">
+    <p class="section-label">
+      <span class="en-text">The Difference</span>
+      <span class="es-text">La Diferencia</span>
+    </p>
+    <h2>
+      <span class="en-text">Content built around what your customer<br>is thinking at <em>2am.</em></span>
+      <span class="es-text">Contenido construido en torno a lo que tu cliente<br>está pensando a las <em>2am.</em></span>
+    </h2>
+    <div class="difference-body">
+      <div>
+        <p>
+          <span class="en-text">This isn't generic video production. Every piece of content I create is built around <strong>what your ideal customer is thinking</strong> when they can't sleep about their roof, their home, or their budget. What they're afraid of. What they need to hear to stop scrolling and take action.</span>
+          <span class="es-text">Esto no es producción de video genérica. Cada pieza de contenido que creo se construye en torno a <strong>lo que tu cliente ideal está pensando</strong> cuando no puede dormir por su techo, su casa o su presupuesto. De qué tienen miedo. Qué necesitan escuchar para dejar de scrollear y tomar acción.</span>
+        </p>
+        <p>
+          <span class="en-text">The result is content that <strong>filters out unqualified leads automatically</strong> — and brings in prospects who are already halfway convinced before they ever speak to your team.</span>
+          <span class="es-text">El resultado es contenido que <strong>filtra automáticamente a los prospectos no calificados</strong> y atrae a clientes potenciales que ya están medio convencidos antes de hablar con tu equipo.</span>
+        </p>
+        <p>
+          <span class="en-text">And you never have to get in front of a camera. <strong>I build a realistic AI avatar using your photo and voice.</strong> It looks natural. It sounds natural. Available in English and Spanish — your brand reaches every market.</span>
+          <span class="es-text">Y nunca tienes que ponerte frente a una cámara. <strong>Construyo un avatar de IA realista usando tu foto y tu voz.</strong> Se ve natural. Suena natural. Disponible en inglés y español: tu marca llega a todos los mercados.</span>
+        </p>
+      </div>
+      <div class="vs-box">
+        <h3>
+          <span class="en-text">Generic Agency vs. Carlos Alayon</span>
+          <span class="es-text">Agencia Genérica vs. Carlos Alayon</span>
+        </h3>
+        <div class="vs-item"><span class="icon no">✕</span><span><span class="en-text">Generic video with stock footage</span><span class="es-text">Video genérico con material de stock</span></span></div>
+        <div class="vs-item"><span class="icon no">✕</span><span><span class="en-text">Same message as every competitor</span><span class="es-text">Mismo mensaje que toda la competencia</span></span></div>
+        <div class="vs-item"><span class="icon no">✕</span><span><span class="en-text">Leads that ghost or price-shop</span><span class="es-text">Prospectos que desaparecen o buscan precio</span></span></div>
+        <div class="vs-item"><span class="icon no">✕</span><span><span class="en-text">You need to appear on camera</span><span class="es-text">Necesitas aparecer en cámara</span></span></div>
+        <div class="vs-divider"></div>
+        <div class="vs-item"><span class="icon yes">✓</span><span><span class="en-text">AI avatar from your photo and voice</span><span class="es-text">Avatar de IA con tu foto y voz</span></span></div>
+        <div class="vs-item"><span class="icon yes">✓</span><span><span class="en-text">Message built around customer pain</span><span class="es-text">Mensaje construido en torno al dolor del cliente</span></span></div>
+        <div class="vs-item"><span class="icon yes">✓</span><span><span class="en-text">Content that pre-qualifies on click</span><span class="es-text">Contenido que pre-califica con un clic</span></span></div>
+        <div class="vs-item"><span class="icon yes">✓</span><span><span class="en-text">English + Spanish — zero recordings</span><span class="es-text">Inglés + Español — cero grabaciones</span></span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- HOW IT WORKS -->
+<section>
+  <p class="section-label">
+    <span class="en-text">How It Works</span>
+    <span class="es-text">Cómo Funciona</span>
+  </p>
+  <h2>
+    <span class="en-text">Four steps to content that<br><em>converts before they call.</em></span>
+    <span class="es-text">Cuatro pasos para contenido que<br><em>convierte antes de que llamen.</em></span>
+  </h2>
+  <div class="steps">
+    <div class="step">
+      <div class="step-number">01</div>
+      <h3><span class="en-text">Identify the Pain</span><span class="es-text">Identificar el Dolor</span></h3>
+      <p><span class="en-text">We map the exact language and pain points your ideal customer responds to — not generic, your market's specific language.</span><span class="es-text">Mapeamos el lenguaje exacto y los puntos de dolor a los que responde tu cliente ideal, no un lenguaje genérico, sino el de tu mercado.</span></p>
+    </div>
+    <div class="step">
+      <div class="step-number">02</div>
+      <h3><span class="en-text">Build Your Avatar</span><span class="es-text">Construir tu Avatar</span></h3>
+      <p><span class="en-text">Realistic AI avatar using your photo and voice. Fully personalized. Natural delivery. No cringe. No robotic feel.</span><span class="es-text">Un avatar de IA realista usando tu foto y voz. Totalmente personalizado. Entrega natural. Sin pena. Sin sensación robótica.</span></p>
+    </div>
+    <div class="step">
+      <div class="step-number">03</div>
+      <h3><span class="en-text">Produce the Content</span><span class="es-text">Producir el Contenido</span></h3>
+      <p><span class="en-text">Video ads written and produced for Facebook and Instagram — hook, message, and CTA built to attract the right prospect.</span><span class="es-text">Anuncios de video escritos y producidos para Facebook e Instagram: gancho, mensaje y CTA construidos para atraer al prospecto correcto.</span></p>
+    </div>
+    <div class="step">
+      <div class="step-number">04</div>
+      <h3><span class="en-text">Run & Convert</span><span class="es-text">Lanzar y Convertir</span></h3>
+      <p><span class="en-text">Your ads position your business as the authority before the prospect even calls. Fewer tire-kickers. More ready buyers.</span><span class="es-text">Tus anuncios posicionan tu negocio como la autoridad antes de que el prospecto llame. Menos curiosos. Más compradores listos.</span></p>
+    </div>
+  </div>
+</section>
+
+<!-- PROOF -->
+<div class="proof-section">
+  <div class="proof-inner">
+    <p class="section-label">
+      <span class="en-text">Real Data</span>
+      <span class="es-text">Datos Reales</span>
+    </p>
+    <h2>
+      <span class="en-text">Same budget. Same audience.<br><em>5x the results.</em></span>
+      <span class="es-text">Mismo presupuesto. Misma audiencia.<br><em>Resultados 5x mejores.</em></span>
+    </h2>
+    <div class="proof-grid">
+      <div>
+        <img src="https://raw.githubusercontent.com/carloseduardoalayon/avatarcontent/main/stats_tinified.jpg" alt="Ads Manager results" style="width:100%; border-radius:4px; border:1px solid rgba(255,255,255,0.1);">
+        <p style="font-size:0.8rem; color:var(--gray); margin-top:12px; line-height:1.5;">
+          <span class="en-text">Feb 26 – Mar 9, 2026 · Same budget · Same audience · Same timeframe</span>
+          <span class="es-text">Feb 26 – Mar 9, 2026 · Mismo presupuesto · Misma audiencia · Mismo período</span>
+        </p>
+      </div>
+      <div class="proof-stats">
+        <div class="stat-row">
+          <span class="stat-label"><span class="en-text">100% Completion</span><span class="es-text">Completado al 100%</span></span>
+          <div class="bar-item"><span class="bar-label"><span class="en-text">Wrong message</span><span class="es-text">Mensaje incorrecto</span></span><div class="bar-track"><div class="bar-fill low" style="width:18%"></div></div><span class="bar-value">3</span></div>
+          <div class="bar-item"><span class="bar-label"><span class="en-text">Right message</span><span class="es-text">Mensaje correcto</span></span><div class="bar-track"><div class="bar-fill" style="width:100%"></div></div><span class="bar-value">17</span></div>
+        </div>
+        <div class="stat-row">
+          <span class="stat-label"><span class="en-text">75% Views</span><span class="es-text">Vistas al 75%</span></span>
+          <div class="bar-item"><span class="bar-label"><span class="en-text">Wrong message</span><span class="es-text">Mensaje incorrecto</span></span><div class="bar-track"><div class="bar-fill low" style="width:17%"></div></div><span class="bar-value">4</span></div>
+          <div class="bar-item"><span class="bar-label"><span class="en-text">Right message</span><span class="es-text">Mensaje correcto</span></span><div class="bar-track"><div class="bar-fill" style="width:100%"></div></div><span class="bar-value">23</span></div>
+        </div>
+        <div class="stat-row">
+          <span class="stat-label"><span class="en-text">25% Views</span><span class="es-text">Vistas al 25%</span></span>
+          <div class="bar-item"><span class="bar-label"><span class="en-text">Wrong message</span><span class="es-text">Mensaje incorrecto</span></span><div class="bar-track"><div class="bar-fill low" style="width:27%"></div></div><span class="bar-value">27</span></div>
+          <div class="bar-item"><span class="bar-label"><span class="en-text">Right message</span><span class="es-text">Mensaje correcto</span></span><div class="bar-track"><div class="bar-fill" style="width:100%"></div></div><span class="bar-value">101</span></div>
+        </div>
+      </div>
+    </div>
+    <p class="proof-note">
+      <span class="en-text">Two creatives. Same budget. Same audience. Same timeframe. <strong>The only difference was the message.</strong> The right message got 5x more complete views — meaning 5x more prospects heard the full call to action.</span>
+      <span class="es-text">Dos creativos. Mismo presupuesto. Misma audiencia. Mismo período. <strong>La única diferencia fue el mensaje.</strong> El mensaje correcto obtuvo 5 veces más vistas completas, lo que significa que 5 veces más prospectos escucharon el llamado a la acción completo.</span>
+    </p>
+  </div>
+</div>
+
+<!-- ABOUT -->
+<section>
+  <p class="section-label">
+    <span class="en-text">Who I Am</span>
+    <span class="es-text">Quién Soy</span>
+  </p>
+  <h2>
+    <span class="en-text">Not an agency. One person.<br><em>One specific thing done exceptionally well.</em></span>
+    <span class="es-text">No una agencia. Una persona.<br><em>Una cosa específica hecha excepcionalmente bien.</em></span>
+  </h2>
+  <div class="about-grid">
+    <div class="about-card">
+      <div class="about-avatar">CA</div>
+      <h3>Carlos Alayon</h3>
+      <p class="role">
+        <span class="en-text">Bilingual Video Content Creator</span>
+        <span class="es-text">Creador de Contenido de Video Bilingüe</span>
+      </p>
+      <p style="font-size:0.9rem;color:#888;line-height:1.6">
+        <span class="en-text">Working remotely with local service businesses in the US. Currently producing AI avatar video content for a roofing company in Southeast Florida.</span>
+        <span class="es-text">Trabajando de forma remota con empresas de servicios locales en EE. UU. Actualmente produzco contenido de video con avatares de IA para una empresa de techos en el sudeste de Florida.</span>
+      </p>
+      <div class="about-tags">
+        <span class="tag">English</span><span class="tag">Spanish</span><span class="tag">AI Avatar</span><span class="tag">FB Ads</span><span class="tag">Remote</span>
+      </div>
+    </div>
+    <div class="about-text">
+      <p>
+        <span class="en-text">I currently work with a roofing company in Southeast Florida producing AI avatar video content for their Facebook Ads — and <strong>the content is gaining real traction.</strong> The data is above. It's not a claim. It's a screenshot.</span>
+        <span class="es-text">Actualmente trabajo con una empresa de techos en el sudeste de Florida produciendo contenido de video con avatares de IA para sus anuncios de Facebook, y <strong>el contenido está ganando tracción real.</strong> Los datos están arriba. No es una afirmación. Es una captura de pantalla.</span>
+      </p>
+      <p>
+        <span class="en-text">I understand the US local service market, how customers think, and how to build content that <strong>creates authority and filters prospects at the same time.</strong> I work in English and Spanish — your business reaches any market without you recording a single thing.</span>
+        <span class="es-text">Entiendo el mercado de servicios locales de EE. UU., cómo piensan los clientes y cómo crear contenido que <strong>crea autoridad y filtra prospectos al mismo tiempo.</strong> Trabajo en inglés y español, lo que significa que tu negocio puede llegar a cualquier mercado, sin que grabes un solo video.</span>
+      </p>
+      <p>
+        <span class="en-text">I'm not an agency. I work with a small number of clients at a time so the quality never drops. <strong>You get my full attention — not a junior account manager.</strong></span>
+        <span class="es-text">No soy una agencia. Trabajo con un número reducido de clientes a la vez para que la calidad nunca baje. <strong>Obtienes toda mi atención, no la de un gerente de cuentas junior.</strong></span>
+      </p>
+    </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- PRICING -->
+<div class="pricing-section">
+  <div class="pricing-inner">
+    <p class="section-label">
+      <span class="en-text">Pricing</span>
+      <span class="es-text">Precios</span>
+    </p>
+    <h2>
+      <span class="en-text">Choose the level that fits<br>where you are <em>right now.</em></span>
+      <span class="es-text">Elige el nivel que se ajuste<br>a dónde estás <em>ahora mismo.</em></span>
+    </h2>
+    <div class="pricing-grid">
+      <div class="pricing-card">
+        <p class="tier-label"><span class="en-text">Starter</span><span class="es-text">Inicial</span></p>
+        <h3 class="tier-name"><span class="en-text">Content Pack</span><span class="es-text">Paquete de Contenido</span></h3>
+        <p class="tier-desc">
+          <span class="en-text">Two AI avatar videos built for your market. The fastest way to see the format working with real data.</span>
+          <span class="es-text">Dos videos de avatar de IA creados para tu mercado. La forma más rápida de ver el formato funcionando con datos reales.</span>
+        </p>
+        <div class="tier-price">$500</div>
+        <p class="tier-price-note">
+          <span class="en-text">One-time · Delivered in 5 business days</span>
+          <span class="es-text">Pago único · Entregado en 5 días hábiles</span>
+        </p>
+        <ul class="tier-features">
+          <li><span class="chk">✓</span><span><span class="en-text">2 AI avatar videos — your photo & voice</span><span class="es-text">2 videos de avatar de IA: tu foto y voz</span></span></li>
+          <li><span class="chk">✓</span><span><span class="en-text">2 creative angles — pain & result-based</span><span class="es-text">2 ángulos creativos: basados en dolor y resultado</span></span></li>
+          <li><span class="chk">✓</span><span><span class="en-text">Copy written around customer pain</span><span class="es-text">Textos escritos en torno al dolor del cliente</span></span></li>
+          <li><span class="chk">✓</span><span><span class="en-text">Optimized for Facebook & Instagram</span><span class="es-text">Optimizado para Facebook e Instagram</span></span></li>
+          <li><span class="chk">✓</span><span><span class="en-text">English, Spanish, or both</span><span class="es-text">Inglés, español o ambos</span></span></li>
+          <li><span class="dsh">–</span><span style="color:var(--gray)"><span class="en-text">Campaign setup not included</span><span class="es-text">Configuración de campaña no incluida</span></span></li>
+          <li><span class="dsh">–</span><span style="color:var(--gray)"><span class="en-text">CRM not included</span><span class="es-text">CRM no incluido</span></span></li>
+        </ul>
+        <a href="#booking" class="tier-cta"><span class="en-text">Get Started</span><span class="es-text">Empezar</span></a>
+      </div>
+      <div class="pricing-card featured">
+        <p class="tier-label"><span class="en-text">Growth</span><span class="es-text">Crecimiento</span></p>
+        <h3 class="tier-name"><span class="en-text">Content + Campaign</span><span class="es-text">Contenido + Campaña</span></h3>
+        <p class="tier-desc">
+          <span class="en-text">Videos plus full campaign setup. Your ads running and optimized from day one — nothing left to figure out.</span>
+          <span class="es-text">Videos más configuración completa de la campaña. Tus anuncios funcionando y optimizados desde el primer día.</span>
+        </p>
+        <div class="tier-price">$1,200</div>
+        <p class="tier-price-note">
+          <span class="en-text">One-time setup · Optional monthly retainer</span>
+          <span class="es-text">Configuración única · Retainer mensual opcional</span>
+        </p>
+        <ul class="tier-features">
+          <li><span class="chk">✓</span><span><span class="en-text">Everything in Content Pack</span><span class="es-text">Todo en el Paquete de Contenido</span></span></li>
+          <li><span class="chk">✓</span><span><span class="en-text">Facebook & Instagram campaign setup</span><span class="es-text">Configuración de campaña de FB & IG</span></span></li>
+          <li><span class="chk">✓</span><span><span class="en-text">Audience targeting & budget structure</span><span class="es-text">Segmentación y estructura de presupuesto</span></span></li>
+          <li><span class="chk">✓</span><span><span class="en-text">Conversion tracking configuration</span><span class="es-text">Configuración de seguimiento de conversiones</span></span></li>
+          <li><span class="chk">✓</span><span><span class="en-text">Landing page or form setup</span><span class="es-text">Configuración de página de destino/formulario</span></span></li>
+          <li><span class="chk">✓</span><span><span class="en-text">2 weeks of optimization included</span><span class="es-text">2 semanas de optimización incluidas</span></span></li>
+          <li><span class="dsh">–</span><span style="color:var(--gray)"><span class="en-text">CRM not included</span><span class="es-text">CRM no incluido</span></span></li>
+        </ul>
+        <a href="#booking" class="tier-cta"><span class="en-text">Get Started</span><span class="es-text">Empezar</span></a>
+      </div>
+      <div class="pricing-card">
+        <p class="tier-label"><span class="en-text">Full System</span><span class="es-text">Sistema Completo</span></p>
+        <h3 class="tier-name"><span class="en-text">Complete Acquisition</span><span class="es-text">Adquisición Completa</span></h3>
+        <p class="tier-desc">
+          <span class="en-text">Content, campaign, CRM, automations, and follow-up — built and running over 3 months.</span>
+          <span class="es-text">Contenido, campaña, CRM, automatizaciones y seguimiento, construido y funcionando durante 3 meses.</span>
+        </p>
+        <div class="tier-price">$3,500</div>
+        <p class="tier-price-note">
+          <span class="en-text">3-month engagement · Custom scope</span>
+          <span class="es-text">Contrato de 3 meses · Alcance personalizado</span>
+        </p>
+        <ul class="tier-features">
+          <li><span class="chk">✓</span><span><span class="en-text">Everything in Content + Campaign</span><span class="es-text">Todo en Contenido + Campaña</span></span></li>
+          <li><span class="chk">✓</span><span><span class="en-text">CRM setup & full configuration</span><span class="es-text">Configuración completa de CRM</span></span></li>
+          <li><span class="chk">✓</span><span><span class="en-text">Lead follow-up automations (SMS + email)</span><span class="es-text">Automatizaciones de seguimiento (SMS + email)</span></span></li>
+          <li><span class="chk">✓</span><span><span class="en-text">Appointment booking system</span><span class="es-text">Sistema de agendamiento de citas</span></span></li>
+          <li><span class="chk">✓</span><span><span class="en-text">Sales team call framework</span><span class="es-text">Guion de llamadas para ventas</span></span></li>
+          <li><span class="chk">✓</span><span><span class="en-text">Monthly reporting & strategy</span><span class="es-text">Reportes y estrategia mensual</span></span></li>
+          <li><span class="chk">✓</span><span><span class="en-text">4 new videos per month</span><span class="es-text">4 videos nuevos por mes</span></span></li>
+        </ul>
+        <a href="#booking" class="tier-cta"><span class="en-text">Book a Call</span><span class="es-text">Agendar Llamada</span></a>
+      </div>
+    </div>
+    <p class="pricing-note">
+      <span class="en-text">Not sure which tier fits? <a href="#booking" style="color:var(--accent);text-decoration:none">Book a free 20-minute call</a> and we'll figure it out together.</span>
+      <span class="es-text">¿No estás seguro de qué plan te conviene? <a href="#booking" style="color:var(--accent);text-decoration:none">Agenda una llamada gratuita de 20 minutos</a> y lo resolveremos juntos.</span>
+    </p>
+  </div>
+</div>
+
+<!-- FOR WHO -->
+<div class="for-who-section">
+  <div class="for-who-inner">
+    <p class="section-label">
+      <span class="en-text">Is This For You?</span>
+      <span class="es-text">¿Es Esto Para Ti?</span>
+    </p>
+    <h2>
+      <span class="en-text">This works for the contractor<br>who is done settling for average results.</span>
+      <span class="es-text">Esto funciona para el contratista<br>que ya no se conforma con resultados promedio.</span>
+    </h2>
+    <div class="for-who-grid">
+      <div class="for-who-card yes">
+        <h3><span class="en-text">This is for you if —</span><span class="es-text">Esto es para ti si —</span></h3>
+        <div class="for-who-item"><span class="chk">✓</span><span><span class="en-text">Your ads are running but your leads aren't converting</span><span class="es-text">Tus anuncios están activos pero tus prospectos no convierten</span></span></div>
+        <div class="for-who-item"><span class="chk">✓</span><span><span class="en-text">You need video content but don't want to be on camera</span><span class="es-text">Necesitas contenido de video pero no quieres salir en cámara</span></span></div>
+        <div class="for-who-item"><span class="chk">✓</span><span><span class="en-text">You're tired of leads that ghost or waste your team's time</span><span class="es-text">Estás cansado de prospectos que desaparecen o hacen perder el tiempo a tu equipo</span></span></div>
+        <div class="for-who-item"><span class="chk">✓</span><span><span class="en-text">You've paid a marketing agency and got activity, not results</span><span class="es-text">Has pagado a una agencia y sentiste que hubo actividad, pero no resultados</span></span></div>
+        <div class="for-who-item"><span class="chk">✓</span><span><span class="en-text">You want content that builds authority before the prospect calls</span><span class="es-text">Quieres contenido que te posicione como la autoridad antes de que el prospecto llame</span></span></div>
+      </div>
+      <div class="for-who-card no">
+        <h3><span class="en-text">This is NOT for you if —</span><span class="es-text">Esto NO es para ti si —</span></h3>
+        <div class="for-who-item"><span class="crs">✕</span><span><span class="en-text">You're looking for cheap content with no strategy</span><span class="es-text">Buscas contenido barato sin estrategia</span></span></div>
+        <div class="for-who-item"><span class="crs">✕</span><span><span class="en-text">You want a full-service agency managing everything</span><span class="es-text">Quieres una agencia de servicio completo que gestione todo</span></span></div>
+        <div class="for-who-item"><span class="crs">✕</span><span><span class="en-text">You won't share information about your market</span><span class="es-text">No estás dispuesto a compartir información sobre tu mercado</span></span></div>
+        <div class="for-who-item"><span class="crs">✕</span><span><span class="en-text">You expect results without running the ads</span><span class="es-text">Esperas resultados sin publicar los anuncios</span></span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- BOOKING -->
+<div class="booking-section" id="booking">
+  <div class="booking-inner">
+    <p class="section-label" style="justify-content:center;margin-bottom:16px">
+      <span class="en-text">Book a Free Call</span>
+      <span class="es-text">Agendar Llamada Gratis</span>
+    </p>
+    <h2><span class="en-text">20 minutes.<br><em>No pitch. Just clarity.</em></span><span class="es-text">20 minutos.<br><em>Sin ventas. Solo claridad.</em></span></h2>
+    <p class="booking-sub">
+      <span class="en-text">Pick a date and time. We'll talk about your market, your current ads, and whether this makes sense for your business.</span>
+      <span class="es-text">Elige una fecha y hora. Hablaremos sobre tu mercado, tus anuncios actuales y si esto tiene sentido para tu negocio.</span>
+    </p>
+    <div class="calendar-widget">
+      <div class="cal-header">
+        <span class="cal-month-year" id="calMonthYear"></span>
+        <div class="cal-nav">
+          <button id="calPrev">&#8249;</button>
+          <button id="calNext">&#8250;</button>
+        </div>
+      </div>
+      <div class="cal-grid">
+        <div class="cal-days-header">
+          <!-- Day names are rendered by JS -->
+        </div>
+        <div class="cal-dates" id="calDates"></div>
+      </div>
+      <div class="time-slots" id="timeSlots">
+        <p class="time-slots-label" id="timeSlotsLabel">Available times</p>
+        <div class="time-slots-grid" id="timeSlotsGrid"></div>
+      </div>
+      <div class="booking-form" id="bookingForm">
+        <p class="booking-form-label">Your details</p>
+        <div class="booking-summary" id="bookingSummary"></div>
+        <div class="form-row">
+          <input class="form-input" type="text" id="bookName" placeholder="Your name">
+          <input class="form-input" type="email" id="bookEmail" placeholder="Email address">
+        </div>
+        <div class="form-row">
+          <input class="form-input" type="text" id="bookCompany" placeholder="Business name & service type (e.g. Sunrise Roofing, FL)" style="grid-column:1/-1">
+        </div>
+        <button class="btn-book" onclick="submitBooking()">Confirm Booking — It's Free</button>
+      </div>
+      <div class="booking-success" id="bookingSuccess">
+        <div class="success-icon">✓</div>
+        <h3>
+          <span class="en-text">You're booked.</span>
+          <span class="es-text">Tu reserva está confirmada.</span>
+        </h3>
+        <p id="successMsg"></p>
+        <p style="margin-top:12px;color:var(--gray);font-size:0.82rem">
+          <span class="en-text">Carlos will confirm via WhatsApp or email within a few hours.</span>
+          <span class="es-text">Carlos confirmará por WhatsApp o email en unas horas.</span>
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- CTA FINAL -->
+<div class="cta-section" id="contact">
+  <h2>
+    <span class="en-text">The contractors winning right now aren't spending more.<br>They're saying <em>the right thing.</em></span>
+    <span class="es-text">Los contratistas que están ganando ahora no están gastando más.<br>Están diciendo <em>lo correcto.</em></span>
+  </h2>
+  <p>
+    <span class="en-text">Most agencies will sell you a system. I build you the message that makes the system work. Let's build yours.</span>
+    <span class="es-text">La mayoría de las agencias te venderán un sistema. Yo te construyo el mensaje que hace que el sistema funcione. Construyamos el tuyo.</span>
+  </p>
+  <div class="cta-buttons">
+    <a href="#booking" class="btn-primary">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+      <span class="en-text">Book a Free Call</span>
+      <span class="es-text">Agendar Llamada Gratis</span>
+    </a>
+    <a href="https://wa.link/vqaapk" target="_blank" class="btn-secondary">WhatsApp</a>
+    <a href="https://instagram.com/videoalayon" target="_blank" class="btn-secondary">@videoalayon</a>
+  </div>
+</div>
+
+<footer>
+  <span><span class="en-text">© 2026 Carlos Alayon. All rights reserved.</span><span class="es-text">© 2026 Carlos Alayon. Todos los derechos reservados.</span></span>
+  <span><span class="en-text">Working remotely · US Local Service Market · </span><span class="es-text">Trabajo remoto · Mercado de Servicios Locales en EE. UU. · </span><a href="https://instagram.com/videoalayon" target="_blank">@videoalayon</a></span>
+</footer>
+
+<script>
+  // ── REEMPLAZA ESTA URL CON LA URL DE TU APPS SCRIPT PUBLICADO ──
+  const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbx8pc0MfjZ031UbJgwUf-Nx1buwSCYaUXY8prJBU94GZkTgnyi0rttbV7m6iCPjDEHb9Q/exec';
+
+  const I18N = {
+    en: {
+      months: ['January','February','March','April','May','June','July','August','September','October','November','December'],
+      weekdays: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
+      locale: 'en-US',
+      availableTimes: 'Available times',
+      introCall: '20-min intro call with Carlos Alayon',
+      yourDetails: 'Your details',
+      namePlaceholder: 'Your name',
+      emailPlaceholder: 'Email address',
+      companyPlaceholder: 'Business name & service type (e.g. Sunrise Roofing, FL)',
+      confirmBtn: "Confirm Booking — It's Free",
+      confirming: 'Confirming...',
+      yourCallIsSet: 'your call is set for',
+      error: 'Something went wrong. Please try again or contact us via WhatsApp.'
+    },
+    es: {
+      months: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+      weekdays: ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'],
+      locale: 'es-ES',
+      availableTimes: 'Horas disponibles',
+      introCall: 'Llamada de 20 min con Carlos Alayon',
+      yourDetails: 'Tus datos',
+      namePlaceholder: 'Tu nombre',
+      emailPlaceholder: 'Correo electrónico',
+      companyPlaceholder: 'Nombre del negocio y servicio (ej. Sunrise Roofing, FL)',
+      confirmBtn: 'Confirmar Reserva — Es Gratis',
+      confirming: 'Confirmando...',
+      yourCallIsSet: 'tu llamada está programada para',
+      error: 'Algo salió mal. Intenta de nuevo o contacta por WhatsApp.'
+    }
+  };
+  let currentLang = 'en';
+
+  const today = new Date();
+  let curYear = today.getFullYear(), curMonth = today.getMonth();
+  let selDate = null, selTime = null;
+  const TIMES = ['9:00 AM','9:30 AM','10:00 AM','10:30 AM','11:00 AM','2:00 PM','2:30 PM','3:00 PM','3:30 PM','4:00 PM','4:30 PM','5:00 PM'];
+
+  function isAvail(date) {
+    const d = date.getDay();
+    const todayStart = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+    return d >= 1 && d <= 5 && date >= todayStart;
+  }
+
+  function renderCal() {
+    const T = I18N[currentLang];
+    document.getElementById('calMonthYear').textContent = T.months[curMonth] + ' ' + curYear;
+
+    const daysHeader = document.querySelector('.cal-days-header');
+    daysHeader.innerHTML = '';
+    T.weekdays.forEach(day => {
+        const dayNameEl = document.createElement('span');
+        dayNameEl.className = 'cal-day-name';
+        dayNameEl.textContent = day;
+        daysHeader.appendChild(dayNameEl);
+    });
+
+    const el = document.getElementById('calDates');
+    el.innerHTML = '';
+    const first = new Date(curYear, curMonth, 1).getDay();
+    const days = new Date(curYear, curMonth + 1, 0).getDate();
+    for (let i = 0; i < first; i++) { const e = document.createElement('div'); e.className = 'cal-date empty'; el.appendChild(e); }
+    for (let d = 1; d <= days; d++) {
+      const date = new Date(curYear, curMonth, d);
+      const div = document.createElement('div');
+      div.className = 'cal-date';
+      div.textContent = d;
+      if (date.toDateString() === today.toDateString()) div.classList.add('today');
+      if (!isAvail(date)) { div.classList.add('past'); }
+      else {
+        div.classList.add('available');
+        if (selDate && date.toDateString() === selDate.toDateString()) div.classList.add('selected');
+        div.addEventListener('click', () => pickDate(date));
+      }
+      el.appendChild(div);
+    }
+    // Update static labels if they are not selected yet
+    if (!selDate) {
+      document.getElementById('timeSlotsLabel').textContent = T.availableTimes;
+    }
+    document.getElementById('bookingFormLabel').textContent = T.yourDetails;
+    document.getElementById('bookName').placeholder = T.namePlaceholder;
+    document.getElementById('bookEmail').placeholder = T.emailPlaceholder;
+    document.getElementById('bookCompany').placeholder = T.companyPlaceholder;
+    document.querySelector('.btn-book').textContent = T.confirmBtn;
+  }
+
+  function pickDate(date) {
+    selDate = date; selTime = null; renderCal();
+    const T = I18N[currentLang];
+    const opts = { weekday:'long', month:'long', day:'numeric' };
+    document.getElementById('timeSlotsLabel').textContent = T.availableTimes + ' — ' + date.toLocaleDateString(T.locale, opts);
+    const grid = document.getElementById('timeSlotsGrid');
+    grid.innerHTML = '';
+    TIMES.forEach(t => {
+      const b = document.createElement('div');
+      b.className = 'time-slot'; b.textContent = t;
+      b.addEventListener('click', () => pickTime(t, b));
+      grid.appendChild(b);
+    });
+    document.getElementById('timeSlots').classList.add('visible');
+    document.getElementById('bookingForm').classList.remove('visible');
+    document.getElementById('timeSlots').scrollIntoView({ behavior:'smooth', block:'nearest' });
+  }
+
+  function pickTime(time, btn) {
+    selTime = time;
+    const T = I18N[currentLang];
+    document.querySelectorAll('.time-slot').forEach(s => s.classList.remove('selected'));
+    btn.classList.add('selected');
+    const opts = { weekday:'long', month:'long', day:'numeric' };
+    document.getElementById('bookingSummary').innerHTML = '<strong>' + selDate.toLocaleDateString(T.locale, opts) + ' at ' + time + '</strong> · ' + T.introCall;
+    document.getElementById('bookingForm').classList.add('visible');
+    document.getElementById('bookingForm').scrollIntoView({ behavior:'smooth', block:'nearest' });
+  }
+
+  function submitBooking() {
+    const T = I18N[currentLang];
+    const name = document.getElementById('bookName').value.trim();
+    const email = document.getElementById('bookEmail').value.trim();
+    const company = document.getElementById('bookCompany').value.trim();
+
+    document.getElementById('bookName').style.borderColor = name ? '' : 'rgba(255,80,80,0.5)';
+    document.getElementById('bookEmail').style.borderColor = email ? '' : 'rgba(255,80,80,0.5)';
+    if (!name || !email || !selDate || !selTime) return;
+
+    // Mostrar estado de carga
+    const btn = document.querySelector('.btn-book');
+    btn.textContent = T.confirming;
+    btn.disabled = true;
+    btn.style.opacity = '0.7';
+
+    const payload = {
+      name: name,
+      email: email,
+      company: company,
+      date: selDate.toISOString().split('T')[0], // formato YYYY-MM-DD
+      time: selTime
+    };
+
+    fetch(APPS_SCRIPT_URL, {
+      method: 'POST',
+      mode: 'no-cors', // Apps Script requiere no-cors
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    })
+    .then(() => {
+      // no-cors no devuelve respuesta legible — asumimos éxito si no hay error de red
+      showSuccess(name);
+    })
+    .catch(err => {
+      btn.textContent = T.confirmBtn;
+      btn.disabled = false;
+      btn.style.opacity = '1';
+      alert(T.error);
+      console.error(err);
+    });
+  }
+
+  function showSuccess(name) {
+    const T = I18N[currentLang];
+    const opts = { weekday:'long', month:'long', day:'numeric' };
+    document.getElementById('bookingForm').classList.remove('visible');
+    document.getElementById('timeSlots').classList.remove('visible');
+    document.getElementById('successMsg').innerHTML =
+      `<strong style="color:var(--accent)">${name}</strong>, ${T.yourCallIsSet} <strong style="color:var(--accent)">${selDate.toLocaleDateString(T.locale, opts)} at ${selTime}</strong>.`;
+    const s = document.getElementById('bookingSuccess');
+    s.classList.add('visible');
+    s.scrollIntoView({ behavior:'smooth', block:'nearest' });
+  }
+
+  // ── VIDEO CONTROLS ──
+  const VIDEO_SOURCES = {
+    en: 'https://github.com/carloseduardoalayon/avatarcontent/raw/main/making-avatars_.mp4',
+    es: 'https://github.com/carloseduardoalayon/avatarcontent/raw/main/making-avatars_.mp4' // reemplaza con la versión en español cuando la tengas
+};
+
+  function toggleMute() {
+    const video = document.getElementById('heroVideo');
+    if (video.muted) {
+      video.muted = false;
+      video.currentTime = 0; // reinicia desde el principio al activar sonido
+      video.play();
+      document.getElementById('iconMuted').style.display = 'none';
+      document.getElementById('iconSound').style.display = 'block';
+    } else {
+      video.muted = true;
+      document.getElementById('iconMuted').style.display = 'block';
+      document.getElementById('iconSound').style.display = 'none';
+    }
+  }
+
+  function switchLang(lang) {
+    currentLang = lang;
+    document.documentElement.lang = lang;
+
+    const video = document.getElementById('heroVideo');
+    document.getElementById('btnEN').classList.toggle('active', lang === 'en');
+    document.getElementById('btnES').classList.toggle('active', lang === 'es');
+    video.src = VIDEO_SOURCES[lang];
+    video.muted = true; // Always start muted on lang switch
+    document.getElementById('iconMuted').style.display = 'block';
+    document.getElementById('iconSound').style.display = 'none';
+    video.play();
+    renderCal();
+  }
+
+  document.getElementById('calPrev').addEventListener('click', () => { curMonth--; if (curMonth < 0) { curMonth = 11; curYear--; } renderCal(); });
+  document.getElementById('calNext').addEventListener('click', () => { curMonth++; if (curMonth > 11) { curMonth = 0; curYear++; } renderCal(); });
+  renderCal();
+</script>
+</body>
+</html>
